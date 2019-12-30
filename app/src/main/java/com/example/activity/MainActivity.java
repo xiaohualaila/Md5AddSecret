@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -67,37 +68,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         OkHttpClient client = new OkHttpClient();//创建OkHttpClient对象。
         MediaType json = MediaType.parse("application/json; charset=utf-8");
         JSONObject object = new JSONObject();
+        JSONObject request_json = new JSONObject();
 
-        long timestamp = System.currentTimeMillis();
+        long timestamp = new Date().getTime();
+        String appId ="e5c2c8c309978e58a5881daf3562f13b";
+        String method ="DEVICEAPI_GETUSERLIST";
+        String clienttype = "WEB";// Android
         try {
 
-
-            object.put("appId", "e5c2c8c309978e58a5881daf3562f13b");
-            object.put("method", "DEVICEAPI_GETUSERLIST");
+            object.put("appId", appId);
+            object.put("method", method);
             object.put("timestamp",timestamp);
-            object.put("clienttype", "Android");
+            object.put("clienttype", clienttype);
                 JSONObject obj = new JSONObject();
                 obj.put("username","shadmin");
                 obj.put("password","123456");
-            object.put("object", obj);
+                object.put("object", obj);
 
-                String md5_str ="1d77fc5874c972062dc72fd949ad5304"
-                       + "DEVICEAPI_GETUSERLIST"
-                       + timestamp
-                       + "Android"
-                       + obj;
-                String md5 = Md5Util.getMd5(md5_str);
+                String md5 = Md5Util.getMd5(appId + method + timestamp + clienttype + obj);
             object.put("secret", md5);
+
+
             Log.i("sss","加密前   "+object.toString());
             String des_str =DESUtil.encrypt(object.toString());
             Log.i("sss","加密后   " +des_str);
 
-
+            request_json.put("method",method);
+            request_json.put("params", des_str);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        RequestBody body = RequestBody.create(json, DESUtil.encrypt(object.toString()));
+        Log.i("sss","最后的请求   " +request_json.toString());
+        RequestBody body = RequestBody.create(json, request_json.toString());
         Request request = new Request.Builder()//创建Request 对象。
                 .url("https://cloud.zq12369.com/nodeapi/deviceapi")
                 .post(body)
