@@ -36,6 +36,7 @@ public class DESUtil {
 
 
     private static String CIPHER_TYPE = "DES/CBC/PKCS7Padding"; //设定参数
+
     private static String EN_TYPE = "DES";
     private static String coding = "utf-8";
 
