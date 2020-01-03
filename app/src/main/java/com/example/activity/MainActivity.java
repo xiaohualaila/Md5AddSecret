@@ -1,7 +1,10 @@
 package com.example.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
                 handler.post(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void run() {
                         if (response.isSuccessful()) {//回调的方法执行在子线程。

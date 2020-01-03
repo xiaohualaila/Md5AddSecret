@@ -1,40 +1,32 @@
 package com.example.md5addsecret;
 
-import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by C4BOM on 2018/6/28.
- * GoodLuck No Bug
- */
+import Decoder.BASE64Decoder;
+
+
 public class AESUtil {
     /**
      * 客户端的向量参数
@@ -66,7 +58,6 @@ public class AESUtil {
      *
      * @param info 需要解密的内容
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String decrypt(String info, String ivString, String keyString) {
         try {
             IvParameterSpec iv = getIv(ivString);
@@ -75,21 +66,15 @@ public class AESUtil {
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
 
 
-          //  byte[] decode = Base64.decode(info.getBytes(coding), Base64.DEFAULT);
-           // byte[] decode = Base64.decode(info, Base64.DEFAULT);
-            byte[] decode = base64_decode(info);
+            byte[] decode = Base64.decode(info.getBytes(coding), Base64.DEFAULT);
 
-
-//            Log.i("sss","Base64 解密结果 "+toHex(decode));
+            Log.i("sss","Base64 解密结果 "+new String(decode, coding));
             byte[] bytes = cipher.doFinal(decode);
-       //     Log.i("sss","AES 解密结果 "+new String(bytes, coding));
-            byte[] decode2 = Base64.decode(new String(bytes, coding), Base64.DEFAULT);
+            byte[] decode2 = (new BASE64Decoder()).decodeBuffer(new String(bytes, coding));
+            String decode3 =  new String(decode2, coding);
+            String decodeStr =  decodeUnicode(decode3);
 
-//            String decode2 =  new String(bytes, coding);
-            String decodeStr =  decodeUnicode(new String(decode2, coding));
-
-            byte[] uncompr =  uncompress(decodeStr.getBytes());
-            return new String(uncompr, coding);
+            return new String(uncompress(decodeStr.getBytes(coding)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -104,9 +89,13 @@ public class AESUtil {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
+
+
 
     public static byte[] base64_decode(String value){
         if(value.length()%4!=0){
@@ -119,18 +108,7 @@ public class AESUtil {
     }
 
 
-    private static final char[] DIGITS
-            = {'0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    public static final String toHex(byte[] data) {
-        final StringBuffer sb = new StringBuffer(data.length * 2);
-        for (int i = 0; i < data.length; i++) {
-            sb.append(DIGITS[(data[i] >>> 4) & 0x0F]);
-            sb.append(DIGITS[data[i] & 0x0F]);
-        }
-        return sb.toString();
-    }
 
     /**
      * 加密代码流程:
@@ -267,6 +245,10 @@ public class AESUtil {
         }
         return out.toByteArray();
     }
+
+
+
+
 
 
 }
