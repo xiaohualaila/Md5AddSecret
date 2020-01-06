@@ -1,4 +1,4 @@
-package com.example.md5addsecret;
+package com.example.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -10,13 +10,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.md5addsecret.AESUtil;
-import com.example.md5addsecret.AesCBC;
-import com.example.md5addsecret.ChangeDESString;
-import com.example.md5addsecret.DESUtil;
-import com.example.md5addsecret.R;
+import com.example.util.AESUtil;
+import com.example.util.ChangeDESString;
+import com.example.util.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -30,7 +29,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView request_, tv_message;
+    private Button request_;
+    private TextView tv_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String des_str = ChangeDESString.changeDESString(obj,"DEVICEAPI_GETUSERLIST");
 
-        Log.i("sss", "最后的请求 " + des_str);
+    //    Log.i("sss", "最后的请求 " + des_str);
         RequestBody body = RequestBody.create(json, des_str);
 
         Request request = new Request.Builder()//创建Request 对象。
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         // callBack.failed("网路异常");
-                        Log.i("sss", "网路异常 ");
+                      //  Log.i("sss", "网路异常 ");
                     }
                 });
             }
@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             String str = null;
                             try {
                                 str = response.body().string();
-                                Log.i("sss", "返回结果 " + str);
                                 str = AESUtil.decrypt(str,"EMNZCGFSBWFWAQ==","bWFwaWVuY29kZQ==");
                                 Log.i("sss", "解密结果 " + str);
                                 tv_message.setText(str);
