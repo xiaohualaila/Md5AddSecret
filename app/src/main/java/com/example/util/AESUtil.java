@@ -41,7 +41,7 @@ public class AESUtil {
     private static String CIPHER_TYPE = "AES/CBC/PKCS7Padding"; //设定参数
 
     private static String EN_TYPE = "AES";
-    private static String coding = "GBK";
+    private static String coding = "utf-8";
 
     /**
      * 解密流程:
@@ -73,9 +73,13 @@ public class AESUtil {
 //            String utf_md5_s = Md5Util.getMd5(result);
 //            Log.i("sss", "utf_md5_s  " + utf_md5_s);
 
+//            byte[] z_bytes_ = ZlibCompress.decompress(unicode_str.getBytes());//zlib 解压
+//            String result = new String(z_bytes_,"utf-8");
+//            Log.i("sss","解密结果 "+result);
 
-
-            byte[] z_bytes_ = ZlibCompress.decompress(unicode_str.getBytes());//zlib 解压
+            String ceshi = "我是小胡qwertyu";
+            byte[] z_bytes =  GZIPUtils.compress(ceshi);
+            byte[] z_bytes_  =uncompress(z_bytes);
             String result = new String(z_bytes_,"utf-8");
             Log.i("sss","解密结果 "+result);
 
@@ -94,6 +98,45 @@ public class AESUtil {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static byte[] uncompress(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        try {
+            GZIPInputStream ungzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return out.toByteArray();
+    }
+
+    public static String uncompressToString(byte[] bytes, String encoding) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        try {
+            GZIPInputStream ungzip = new GZIPInputStream(in);
+            byte[] buffer = new byte[256];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toString(encoding);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -344,27 +387,7 @@ public class AESUtil {
 
 
 
-    /**
-     * GZIP解压缩
-     */
-    public static byte[] uncompress(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        try {
-            GZIPInputStream ungzip = new GZIPInputStream(in);
-            byte[] buffer = new byte[256];
-            int n;
-            while ((n = ungzip.read(buffer)) >= 0) {
-                out.write(buffer, 0, n);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return out.toByteArray();
-    }
+
 
 
 }
