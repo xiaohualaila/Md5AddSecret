@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <external-path path="JChatDemo/recvFiles" name="external_path" />
+        <external-path path="zhangjiagang" name="app_down" />
+        <external-path path="" name="camera_photos" />
+        <cache-path name="chche" path = "."/>
+    </paths>
+</resources>
+

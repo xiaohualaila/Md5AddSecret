@@ -1,7 +1,6 @@
 package com.example.util;
 
 import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,8 +13,8 @@ public class ChangeDESString {
     public static String changeDESString(JSONObject obj,String _method){
         JSONObject object = new JSONObject();
 
-      //  long timestamp = System.currentTimeMillis();
-        long timestamp = 1578032037L;
+        long timestamp = System.currentTimeMillis();
+
         String appId = "09a81bbeead6416312a6d2df0418a449";
         String method = _method;
         String clienttype = "Android";
@@ -23,6 +22,7 @@ public class ChangeDESString {
 
         try {
             object.put("appId", appId);
+            object.put("java", true);
             object.put("method", method);
             object.put("timestamp", timestamp);
             object.put("clienttype", clienttype);
@@ -31,7 +31,7 @@ public class ChangeDESString {
             String md5 = Md5Util.getMd5(appId + method + timestamp + clienttype + obj.toString());
             object.put("secret", md5);
             des_str = "text=" + DESUtil.encrypt(object.toString());
-            Log.i("sss", "加密后   " + des_str);
+//            Log.i("sss", "加密后   " + des_str);
             des_str =des_str.replaceAll("\\+", "%2B");
             des_str = des_str.replaceAll("/", "%2F");
             des_str= des_str.replaceAll("\n","");

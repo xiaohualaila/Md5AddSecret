@@ -3,7 +3,6 @@ package com.example.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.example.util.AESUtil;
 import com.example.util.ChangeDESString;
 import com.example.util.R;
@@ -70,10 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         String des_str = ChangeDESString.changeDESString(obj,"DEVICEAPI_GETUSERLIST");
-
-    //    Log.i("sss", "最后的请求 " + des_str);
         RequestBody body = RequestBody.create(json, des_str);
-
         Request request = new Request.Builder()//创建Request 对象。
                 .url("https://cloud.zq12369.com/nodeapi/deviceapi")
                 .post(body)
@@ -82,12 +77,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //请求加入调度
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(@NonNull Call call, IOException e) {
+            public void onFailure(@NonNull Call call, final IOException e) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         // callBack.failed("网路异常");
-                      //  Log.i("sss", "网路异常 ");
+                  //      Log.i("sss", "网路异常 "+e.getMessage());
+                        tv_message.setText(e.getMessage());
                     }
                 });
             }
@@ -103,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             try {
                                 str = response.body().string();
                                 str = AESUtil.decrypt(str,"EMNZCGFSBWFWAQ==","bWFwaWVuY29kZQ==");
-                                Log.i("sss", "解密结果 " + str);
                                 tv_message.setText(str);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -111,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.i("sss", "返回结果 " + response.code());
                             tv_message.setText(response.message());
                         }
                     }
